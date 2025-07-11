@@ -105,7 +105,7 @@ pub fn process_liquidate(ctx: Context<Liquidate>) -> Result<()> {
 
     let collateral_decimals = ctx.accounts.collateral_mint.decimals;
 
-    transfer_checked(cpi_ctx_to_liquidator, liquidator_amount, collateral_decimals);
+    let _ = transfer_checked(cpi_ctx_to_liquidator, liquidator_amount, collateral_decimals);
 
 
    
