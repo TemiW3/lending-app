@@ -5,5 +5,7 @@ pub enum ErrorCode {
     #[msg("Insufficient Funds")]
     InsufficientFunds,
     #[msg("Over the Borrowable Amount")]
-    OverTheBorrowableAmount,  
+    OverTheBorrowableAmount,
+    #[msg("Insufficient Repay Amount")]
+    InsufficientRepayAmount,  
 }

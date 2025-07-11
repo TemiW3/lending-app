@@ -41,6 +41,10 @@ pub mod lending {
         process_borrow(ctx, amount)
     }
 
+    pub fn repay(ctx: Context<Repay>, amount: u64) -> Result<()> {
+        proccess_repay(ctx, amount)
+    }
+
 
 }
 
