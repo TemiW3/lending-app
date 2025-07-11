@@ -16,11 +16,11 @@ use std::f64::consts::E;
 use crate::{
     constants::{
         MAX_AGE, 
-        SOL_USD_FEED_ID}, 
+        SOL_USD_FEED_ID, USDC_USD_FEED_ID}, 
+    errors::ErrorCode, 
     state::{
         Bank, 
-        User},
-    errors::ErrorCode
+        User}
 };
 
 
@@ -85,7 +85,7 @@ pub fn process_borrow(ctx: Context<Borrow>, amount: u64) -> Result<()> {
             total_collateral = sol_price.price as u64 * new_value;
         },
     _ => {
-            let usdc_feed_id = get_feed_id_from_hex(SOL_USD_FEED_ID)?;
+            let usdc_feed_id = get_feed_id_from_hex(USDC_USD_FEED_ID)?;
             let usdc_price = price_update.get_price_no_older_than(&Clock::get()?, MAX_AGE, &usdc_feed_id)?;
             let new_value = calculate_accrued_interest(user_account.deposited_usdc, bank.interest_rate, user_account.last_updated)?;
             total_collateral = usdc_price.price as u64 * new_value;
@@ -106,7 +106,7 @@ pub fn process_borrow(ctx: Context<Borrow>, amount: u64) -> Result<()> {
     };
 
     let cpi_program = ctx.accounts.token_program.to_account_info();
-     let mint_key = ctx.accounts.mint.key();
+    let mint_key = ctx.accounts.mint.key();
 
     let signer_seeds: &[&[&[u8]]] = &[
        &[
@@ -154,7 +154,7 @@ pub fn process_borrow(ctx: Context<Borrow>, amount: u64) -> Result<()> {
     Ok(())
 }
 
-fn calculate_accrued_interest(deposited: u64, interest_rate: u64, last_updated: i64) -> Result<u64> {
+pub fn calculate_accrued_interest(deposited: u64, interest_rate: u64, last_updated: i64) -> Result<u64> {
     let time_diff = Clock::get().unwrap().unix_timestamp - last_updated;
     let new_value = (deposited as f64 * E.powf(interest_rate as f64 * time_diff as f64)) as u64;
     Ok(new_value)

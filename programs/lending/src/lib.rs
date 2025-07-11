@@ -45,6 +45,10 @@ pub mod lending {
         proccess_repay(ctx, amount)
     }
 
+    pub fn liquidate(ctx: Context<Liquidate>) -> Result<()> {
+        process_liquidate(ctx)
+    }
+
 
 }
 

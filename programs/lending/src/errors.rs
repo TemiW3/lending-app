@@ -8,4 +8,6 @@ pub enum ErrorCode {
     OverTheBorrowableAmount,
     #[msg("Insufficient Repay Amount")]
     InsufficientRepayAmount,  
+    #[msg("Health Factor is above the threshold")]
+    HealthFactorAboveThreshold,
 }
