@@ -7,8 +7,8 @@ import { BankrunProvider } from "anchor-bankrun";
 import { PythSolanaReceiver } from "@pythnetwork/pyth-solana-receiver";
 import { BankrunContextWrapper } from "../bankrun-utils/bankrunConnection";
 import { BN, Program } from "@coral-xyz/anchor";
-import { createMint, mintTo } from "spl-token-bankrun";
-import { createAccount, TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import { createMint, mintTo, createAccount } from "spl-token-bankrun";
+import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 
 describe("Lending smart contract test", async () => {
   let context: ProgramTestContext;
@@ -147,7 +147,7 @@ describe("Lending smart contract test", async () => {
   });
 
   it("Create and Fund Token Account", async () => {
-    const USDCTokenAccount = await createAccount(
+    const usdcTokenAccount = await createAccount(
       // @ts-ignores
       banksClient,
       signer,
@@ -155,7 +155,7 @@ describe("Lending smart contract test", async () => {
       signer.publicKey
     );
 
-    console.log("USDC Token Account Created:", USDCTokenAccount);
+    console.log("USDC Token Account Created:", usdcTokenAccount);
 
     const amount = 10_000 * 10 ** 9;
     const mintUSDCTx = await mintTo(
@@ -163,7 +163,7 @@ describe("Lending smart contract test", async () => {
       banksClient,
       signer,
       mintUsdc,
-      USDCTokenAccount,
+      usdcTokenAccount,
       signer,
       amount
     );
