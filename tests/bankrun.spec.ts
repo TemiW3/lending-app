@@ -8,7 +8,7 @@ import { PythSolanaReceiver } from "@pythnetwork/pyth-solana-receiver";
 import { BankrunContextWrapper } from "../bankrun-utils/bankrunConnection";
 import { BN, Program } from "@coral-xyz/anchor";
 import { createMint, mintTo } from "spl-token-bankrun";
-import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import { createAccount, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 
 describe("Lending smart contract test", async () => {
   let context: ProgramTestContext;
@@ -107,5 +107,67 @@ describe("Lending smart contract test", async () => {
     );
 
     console.log("Mint USDC to bank: ", mintTx);
+  });
+
+  it("Test Init user ", async () => {
+    const initUserTx = program.methods
+      .initializeUser(mintUsdc)
+      .accounts({
+        signer: signer.publicKey,
+      })
+      .rpc({ commitment: "confirmed" });
+
+    console.log("Init user:", initUserTx);
+  });
+
+  it("Test init and fund sol bank", async () => {
+    const initSolBankTx = await program.methods
+      .initializeBank(new BN(2), new BN(1))
+      .accounts({
+        signer: signer.publicKey,
+        mint: mintSol,
+        tokenProgram: TOKEN_PROGRAM_ID,
+      })
+      .rpc({ commitment: "confirmed" });
+
+    console.log("created SOL Bank account:", initSolBankTx);
+
+    const amount = 10_000 * 10 ** 9;
+
+    const mintTx = await mintTo(
+      banksClient,
+      signer,
+      mintSol,
+      solBankAccount,
+      signer,
+      amount
+    );
+
+    console.log("Mint SOL to bank: ", mintTx);
+  });
+
+  it("Create and Fund Token Account", async () => {
+    const USDCTokenAccount = await createAccount(
+      // @ts-ignores
+      banksClient,
+      signer,
+      mintUsdc,
+      signer.publicKey
+    );
+
+    console.log("USDC Token Account Created:", USDCTokenAccount);
+
+    const amount = 10_000 * 10 ** 9;
+    const mintUSDCTx = await mintTo(
+      // @ts-ignores
+      banksClient,
+      signer,
+      mintUsdc,
+      USDCTokenAccount,
+      signer,
+      amount
+    );
+
+    console.log("Mint to USDC Bank Signature:", mintUSDCTx);
   });
 });
