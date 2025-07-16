@@ -9,6 +9,7 @@ import { BankrunContextWrapper } from "../bankrun-utils/bankrunConnection";
 import { BN, Program } from "@coral-xyz/anchor";
 import { createMint, mintTo, createAccount } from "spl-token-bankrun";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import * as anchor from "@coral-xyz/anchor";
 
 describe("Lending smart contract test", async () => {
   let context: ProgramTestContext;
@@ -51,6 +52,18 @@ describe("Lending smart contract test", async () => {
   const feedAccountInfo = await devnetConnection.getAccountInfo(
     solUsdPriceFeedAccountPubkey
   );
+
+  const currentTimestamp = Math.floor(Date.now() / 1000); // Current Unix timestamp
+  const priceData = {
+    ...feedAccountInfo.data, // Copy existing data
+    // Modify timestamp field (adjust offset based on Pyth price feed structure)
+    timestamp: Buffer.from(new anchor.BN(currentTimestamp).toArray("le", 8)),
+  };
+  feedAccountInfo.data = Buffer.concat([
+    feedAccountInfo.data.slice(0 /* offset of timestamp in Pyth structure */),
+    priceData.timestamp,
+    feedAccountInfo.data.slice(/* offset + 8 */),
+  ]);
 
   context.setAccount(solUsdPriceFeedAccountPubkey, feedAccountInfo);
 
@@ -192,6 +205,34 @@ describe("Lending smart contract test", async () => {
 
     console.log("Deposit USDC", depositUSDC);
   });
+  it("Test Deposit SOL", async () => {
+    const solTokenAccount = await createAccount(
+      // @ts-ignores
+      banksClient,
+      signer,
+      mintSol,
+      signer.publicKey
+    );
+    const amount = 1_000; // 1 SOL (adjust for decimals)
+    await mintTo(
+      // @ts-ignores
+      banksClient,
+      signer,
+      mintSol,
+      solTokenAccount,
+      signer,
+      amount
+    );
+    const depositSOL = await program.methods
+      .deposit(new BN(amount))
+      .accounts({
+        signer: signer.publicKey,
+        mint: mintSol,
+        tokenProgram: TOKEN_PROGRAM_ID,
+      })
+      .rpc({ commitment: "confirmed" });
+    console.log("Deposit SOL", depositSOL);
+  });
 
   it("Test Borrow", async () => {
     const borrowSOL = await program.methods
@@ -222,7 +263,7 @@ describe("Lending smart contract test", async () => {
 
   it("Test Withdraw", async () => {
     const withdrawUSDC = await program.methods
-      .withdraw(new BN(100))
+      .withdraw(new BN(10))
       .accounts({
         signer: signer.publicKey,
         mint: mintUsdc,

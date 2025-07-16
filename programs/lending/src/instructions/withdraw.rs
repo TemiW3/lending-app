@@ -43,7 +43,7 @@ pub fn process_withdraw(ctx: Context<Withdraw>, amount: u64) -> Result<()> {
 
     let transfer_cpi_accounts = TransferChecked {
         from: ctx.accounts.bank_token_account.to_account_info(),
-        to: ctx.accounts.user_account.to_account_info(),
+        to: ctx.accounts.user_token_account.to_account_info(),
         authority: ctx.accounts.bank_token_account.to_account_info(),
         mint: ctx.accounts.mint.to_account_info(),
     };
