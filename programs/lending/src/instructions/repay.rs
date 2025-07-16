@@ -1,5 +1,3 @@
-use std::f64::consts::E;
-
 use anchor_lang::prelude::*;
 use anchor_spl::{
     associated_token::AssociatedToken, 
@@ -34,18 +32,20 @@ pub fn proccess_repay(ctx: Context<Repay>, amount: u64) -> Result<()> {
         }
     }
 
-    let time_diff = user_account.last_updated_borrow - Clock::get()?.unix_timestamp;
-
-    let bank = &mut ctx.accounts.bank;
-    bank.total_borrowed -= (bank.total_borrowed as f64 * E.powf(time_diff as f64 * bank.interest_rate as f64)) as u64;
-    
-    let value_per_share = bank.total_borrowed as f64 / bank.total_borrowed_shares as f64;
-
-    let user_value = borrowed_amount as f64 / value_per_share;
-
-    if amount > user_value as u64 {
+    if amount > borrowed_amount as u64 {
         return Err(ErrorCode::InsufficientRepayAmount.into());
     }
+
+    // let time_diff = user_account.last_updated_borrow - Clock::get()?.unix_timestamp;
+
+    let bank = &mut ctx.accounts.bank;
+    // bank.total_borrowed -= (bank.total_borrowed as f64 * E.powf(time_diff as f64 * bank.interest_rate as f64)) as u64;
+    
+    // let value_per_share = bank.total_borrowed as f64 / bank.total_borrowed_shares as f64;
+
+    // let user_value = borrowed_amount as f64 / value_per_share;
+
+    
 
     let transfer_cpi_accounts = TransferChecked {
         from: ctx.accounts.user_token_account.to_account_info(),

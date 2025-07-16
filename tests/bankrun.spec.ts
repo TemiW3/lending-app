@@ -102,7 +102,6 @@ describe("Lending smart contract test", async () => {
   });
 
   it("Test init and fund bank", async () => {
-    console.log("entering");
     const initUsdcBankTx = await program.methods
       .initializeBank(new BN(1), new BN(1))
       .accounts({

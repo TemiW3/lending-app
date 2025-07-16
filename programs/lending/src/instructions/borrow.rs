@@ -79,20 +79,20 @@ pub fn process_borrow(ctx: Context<Borrow>, amount: u64) -> Result<()> {
 
     match ctx.accounts.mint.to_account_info().key(){
         key if key == user_account.usdc_address => {
-            let sol_feed_id = get_feed_id_from_hex(SOL_USD_FEED_ID)?;
-            let sol_price  = price_update.get_price_no_older_than(&Clock::get()?, MAX_AGE, &sol_feed_id)?;
-            let new_value = calculate_accrued_interest(user_account.deposited_sol, bank.interest_rate, user_account.last_updated)?;
-            total_collateral = sol_price.price as u64 * new_value;
-        },
-    _ => {
             let usdc_feed_id = get_feed_id_from_hex(USDC_USD_FEED_ID)?;
-            let usdc_price = price_update.get_price_no_older_than(&Clock::get()?, MAX_AGE, &usdc_feed_id)?;
+            let usdc_price  = price_update.get_price_no_older_than(&Clock::get()?, MAX_AGE, &usdc_feed_id)?;
             let new_value = calculate_accrued_interest(user_account.deposited_usdc, bank.interest_rate, user_account.last_updated)?;
             total_collateral = usdc_price.price as u64 * new_value;
+        },
+    _ => {
+            let sol_feed_id = get_feed_id_from_hex(SOL_USD_FEED_ID)?;
+            let sol_price = price_update.get_price_no_older_than(&Clock::get()?, MAX_AGE, &sol_feed_id)?;
+            let new_value = calculate_accrued_interest(user_account.deposited_sol, bank.interest_rate, user_account.last_updated)?;
+            total_collateral = sol_price.price as u64 * new_value;
         }
     }
 
-    let borrowable_amount = total_collateral.checked_mul(bank.liquidation_threshold).unwrap();
+    let borrowable_amount = total_collateral as u64 * bank.liquidation_threshold;
 
     if borrowable_amount < amount {
         return Err(ErrorCode::OverTheBorrowableAmount.into());

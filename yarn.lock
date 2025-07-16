@@ -53,6 +53,14 @@
     superstruct "^0.15.4"
     toml "^3.0.0"
 
+"@coral-xyz/borsh@^0.28.0":
+  version "0.28.0"
+  resolved "https://registry.npmjs.org/@coral-xyz/borsh/-/borsh-0.28.0.tgz"
+  integrity sha512-/u1VTzw7XooK7rqeD7JLUSwOyRSesPUk0U37BV9zK0axJc1q0nRbKFGFLYCQ16OtdOJTTwGfGp11Lx9B45bRCQ==
+  dependencies:
+    bn.js "^5.1.2"
+    buffer-layout "^1.2.0"
+
 "@coral-xyz/borsh@^0.29.0":
   version "0.29.0"
   resolved "https://registry.npmjs.org/@coral-xyz/borsh/-/borsh-0.29.0.tgz"
@@ -178,6 +186,15 @@
   version "1.1.0"
   resolved "https://registry.npmjs.org/@protobufjs/utf8/-/utf8-1.1.0.tgz"
   integrity sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==
+
+"@pythnetwork/client@^2.22.1":
+  version "2.22.1"
+  resolved "https://registry.npmjs.org/@pythnetwork/client/-/client-2.22.1.tgz"
+  integrity sha512-/RjUB7BMWl42Hr3qSezmO+tsOPBdtrNNXkjskJgZx0kYi+O1UlAweWuwjWBXTNOqlL9jab24odomx8KCAzFjtg==
+  dependencies:
+    "@coral-xyz/anchor" "^0.29.0"
+    "@coral-xyz/borsh" "^0.28.0"
+    buffer "^6.0.1"
 
 "@pythnetwork/price-service-client@^1.9.0":
   version "1.9.0"
@@ -436,7 +453,7 @@
   dependencies:
     buffer "^6.0.3"
 
-"@solana/web3.js@^1.32.0", "@solana/web3.js@^1.68.0", "@solana/web3.js@^1.78.4", "@solana/web3.js@^1.90.0", "@solana/web3.js@^1.94.0", "@solana/web3.js@^1.95.3", "@solana/web3.js@1.94.0":
+"@solana/web3.js@^1.30.2", "@solana/web3.js@^1.32.0", "@solana/web3.js@^1.68.0", "@solana/web3.js@^1.78.4", "@solana/web3.js@^1.90.0", "@solana/web3.js@^1.94.0", "@solana/web3.js@^1.95.3", "@solana/web3.js@1.94.0":
   version "1.94.0"
   resolved "https://registry.npmjs.org/@solana/web3.js/-/web3.js-1.94.0.tgz"
   integrity sha512-wMiBebzu5I2fTSz623uj6VXpWFhl0d7qJKqPFK2I4IBLTNUdv+bOeA4H7OBM7Gworv7sOvB3xibRql6l61MeqA==
@@ -728,7 +745,7 @@ buffer-layout@^1.2.0, buffer-layout@^1.2.2:
   resolved "https://registry.npmjs.org/buffer-layout/-/buffer-layout-1.2.2.tgz"
   integrity sha512-kWSuLN694+KTk8SrYvCqwP2WcgQjoRCiF5b4QDvkkz8EmgD+aWAIceGFKMIAdmF/pH+vpgNV3d3kAKorcdAmWA==
 
-buffer@^6.0.3, buffer@~6.0.3, buffer@6.0.3:
+buffer@^6.0.1, buffer@^6.0.3, buffer@~6.0.3, buffer@6.0.3:
   version "6.0.3"
   resolved "https://registry.npmjs.org/buffer/-/buffer-6.0.3.tgz"
   integrity sha512-FTiCpNxtwiZZHEZbcbTIcZjERVICn9yq/pDFkTl95/AxzD1naBctN7YO68riM/gLSDY7sdrMby8hofADYuuqOA==
