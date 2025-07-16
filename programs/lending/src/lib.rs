@@ -12,7 +12,7 @@ mod constants;
 
 
 
-declare_id!("JAVuBXeBZqXNtS73azhBDAoYaaAFfo4gWXoZe2e7Jf8H");
+declare_id!("GzYpARg7BAKguDwDbZkeG1m7sgY7zZw8Yik56RBivdW9");
 
 #[program]
 pub mod lending {

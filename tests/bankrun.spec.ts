@@ -42,22 +42,28 @@ describe("Lending smart contract test", async () => {
     wallet: provider.wallet,
   });
 
-  const solUsdPriceFeedAccount = pythSolanaReceiver.getPriceFeedAccountAddress(
-    0,
-    SOL_PRICE_FEED_ID
-  );
+  const solUsdPriceFeedAccount = pythSolanaReceiver
+    .getPriceFeedAccountAddress(0, SOL_PRICE_FEED_ID)
+    .toBase58();
+
+  const solUsdPriceFeedAccountPubkey = new PublicKey(solUsdPriceFeedAccount);
 
   const feedAccountInfo = await devnetConnection.getAccountInfo(
-    solUsdPriceFeedAccount
+    solUsdPriceFeedAccountPubkey
   );
 
-  context.setAccount(solUsdPriceFeedAccount, feedAccountInfo);
+  context.setAccount(solUsdPriceFeedAccountPubkey, feedAccountInfo);
+
+  console.log("pricefeed:", solUsdPriceFeedAccount);
+
+  console.log("Pyth Account Info:", accountInfo);
 
   program = new Program<Lending>(IDL as Lending, provider);
   banksClient = context.banksClient;
   signer = provider.wallet.payer;
 
   const mintUsdc = await createMint(
+    // @ts-ignore
     banksClient,
     signer,
     signer.publicKey,
@@ -66,6 +72,7 @@ describe("Lending smart contract test", async () => {
   );
 
   const mintSol = await createMint(
+    // @ts-ignore
     banksClient,
     signer,
     signer.publicKey,
@@ -74,16 +81,28 @@ describe("Lending smart contract test", async () => {
   );
 
   [usdcBankAccount] = PublicKey.findProgramAddressSync(
-    [Buffer.from("treasury", mintUsdc.toBuffer())],
+    [Buffer.from("treasury"), mintUsdc.toBuffer()],
     program.programId
   );
 
   [solBankAccount] = PublicKey.findProgramAddressSync(
-    [Buffer.from("treasury", mintSol.toBuffer())],
+    [Buffer.from("treasury"), mintSol.toBuffer()],
     program.programId
   );
 
+  it("Test Init user ", async () => {
+    const initUserTx = program.methods
+      .initializeUser(mintUsdc)
+      .accounts({
+        signer: signer.publicKey,
+      })
+      .rpc({ commitment: "confirmed" });
+
+    console.log("Init user:", initUserTx);
+  });
+
   it("Test init and fund bank", async () => {
+    console.log("entering");
     const initUsdcBankTx = await program.methods
       .initializeBank(new BN(1), new BN(1))
       .accounts({
@@ -98,6 +117,7 @@ describe("Lending smart contract test", async () => {
     const amount = 10_000 * 10 ** 9;
 
     const mintTx = await mintTo(
+      // @ts-ignores
       banksClient,
       signer,
       mintUsdc,
@@ -107,17 +127,6 @@ describe("Lending smart contract test", async () => {
     );
 
     console.log("Mint USDC to bank: ", mintTx);
-  });
-
-  it("Test Init user ", async () => {
-    const initUserTx = program.methods
-      .initializeUser(mintUsdc)
-      .accounts({
-        signer: signer.publicKey,
-      })
-      .rpc({ commitment: "confirmed" });
-
-    console.log("Init user:", initUserTx);
   });
 
   it("Test init and fund sol bank", async () => {
@@ -135,6 +144,7 @@ describe("Lending smart contract test", async () => {
     const amount = 10_000 * 10 ** 9;
 
     const mintTx = await mintTo(
+      // @ts-ignores
       banksClient,
       signer,
       mintSol,

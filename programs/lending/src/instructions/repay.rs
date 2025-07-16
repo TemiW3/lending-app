@@ -114,7 +114,8 @@ pub struct Repay<'info> {
     pub user_account: Account<'info, User>,
 
     #[account(
-        mut,
+        init_if_needed,
+        payer = signer,
         associated_token::mint = mint,
         associated_token::authority = signer,
         associated_token::token_program = token_program,
